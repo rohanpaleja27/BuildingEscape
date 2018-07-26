@@ -31,7 +31,7 @@ public:
 
 
 private:
-	UPROPERTY(EditAnywhere) //indicates is visible in all property windows but cannot be edited
+	UPROPERTY(EditAnywhere) //VisibleAnywhere indicates is visible in all property windows but cannot be edited
 	float OpenAngle = -90.f;
 
 	UPROPERTY(EditAnywhere)
