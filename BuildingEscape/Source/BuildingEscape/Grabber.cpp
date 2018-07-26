@@ -1,8 +1,12 @@
 // Copyright Rohan Paleja 2018
 
 #include "Grabber.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/Controller.h"
+#include "Engine/World.h"
 #include "GameFramework/Actor.h"
 
+#define OUT  //MACRO does nothing, compiler subsitutes OUT for nothing
 // Sets default values for this component's properties
 UGrabber::UGrabber()
 {
@@ -30,6 +34,18 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// Get player viewpoint
+	FVector PVPLocation;  //PVP is PlayerViewPoint
+	FRotator PVPRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PVPLocation,OUT PVPRotation);
+	
+	
+	
+	UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"), 
+		*PVPLocation.ToString(), 
+		*PVPRotation.ToString()
+	)
+	// Ray-casting out to reach distance
+	// See what we hit
 }
 
