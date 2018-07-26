@@ -1,7 +1,7 @@
 // Copyright Rohan Paleja 2018
 
 #include "Grabber.h"
-
+#include "GameFramework/Actor.h"
 
 // Sets default values for this component's properties
 UGrabber::UGrabber()
@@ -19,7 +19,8 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	FString ObjectName = GetOwner()->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("%s is reporting for duty"), *ObjectName);
 	
 }
 
