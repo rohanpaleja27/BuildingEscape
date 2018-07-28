@@ -4,6 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Controller.h"
 #include "Engine/World.h"
+#include "Public/DrawDebugHelpers.h"
 #include "GameFramework/Actor.h"
 
 #define OUT  //MACRO does nothing, compiler subsitutes OUT for nothing
@@ -40,11 +41,23 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PVPLocation,OUT PVPRotation);
 	
 	
-	
-	UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"), 
+	/*UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"), 
 		*PVPLocation.ToString(), 
 		*PVPRotation.ToString()
-	)
+	)*/
+	FVector LineTrace = PVPRotation.Vector()*Reach;
+	FVector LineTraceEnd = PVPLocation +LineTrace; //cm
+	//Draw a red trace in the world to visualize
+	DrawDebugLine(
+		GetWorld(),
+		PVPLocation,
+		LineTraceEnd,
+		FColor(255, 0, 0),
+		false,
+		0.f,
+		0.f,
+		10.f
+	);
 	// Ray-casting out to reach distance
 	// See what we hit
 }
