@@ -35,7 +35,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// Get player viewpoint
+	/// Get player viewpoint
 	FVector PVPLocation;  //PVP is PlayerViewPoint
 	FRotator PVPRotation;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PVPLocation,OUT PVPRotation);
@@ -45,6 +45,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		*PVPLocation.ToString(), 
 		*PVPRotation.ToString()
 	)*/
+
 	FVector LineTrace = PVPRotation.Vector()*Reach;
 	FVector LineTraceEnd = PVPLocation +LineTrace; //cm
 	//Draw a red trace in the world to visualize
@@ -58,7 +59,24 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		0.f,
 		10.f
 	);
-	// Ray-casting out to reach distance
+	/// Setup Query Param
+	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());  //This interacts with simple collision objects and ignore outself
+
+	FHitResult Hit;
+	/// Ray-casting out to reach distance
+	GetWorld()->LineTraceSingleByObjectType(
+		OUT Hit,
+		PVPLocation,
+		LineTraceEnd,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody)
+		);
 	// See what we hit
+	AActor *ActorHit = Hit.GetActor();
+	if (ActorHit)
+	{
+	FString IntersectingActor = ActorHit->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("Intersecting with: %s"), *IntersectingActor);
+	}
+	 
 }
 
