@@ -37,8 +37,23 @@ void UGrabber::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("NO PHYSICS HANDLE FOUND FOR %s"), *ObjectName);
 	}
+	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (InputComponent)
+	{
+		// Input Component is found
+		// Bind the input axis
+		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("NO INPUT COMPONENT FOUND FOR %s"), *ObjectName);
+	}
 }
 
+void UGrabber::Grab()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Grab Key Pressed"));
+}
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
