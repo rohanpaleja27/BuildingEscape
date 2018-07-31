@@ -30,8 +30,18 @@ private:
 	float Reach = 100.f; // How far ahead of the player can we reach in cm?
 	UPhysicsHandleComponent *PhysicsHandle= nullptr;
 	UInputComponent *InputComponent = nullptr;
+	// Ray-cast and grab what's in reach
+	void Grab(); 
 
-	void Grab(); // Ray-cast and grab what's in reach
-	void Release(); // Release object
+	// Release object
+	void Release(); 
+
+	void FindPhysicsHandleComponent();
+
+	// setup assumed input component
+	void SetupInputComponent(); 
+	
+	// Return hit for first physics body in reach
+	const FHitResult GetFirstPhysicsBodyinReach();
 	
 };

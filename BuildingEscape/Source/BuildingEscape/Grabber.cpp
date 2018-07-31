@@ -14,8 +14,6 @@ UGrabber::UGrabber()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -23,10 +21,14 @@ UGrabber::UGrabber()
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	FindPhysicsHandleComponent();
+	SetupInputComponent();
+}
+
+
+void UGrabber::FindPhysicsHandleComponent()
+{
 	FString ObjectName = GetOwner()->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("%s is reporting for duty"), *ObjectName);
-	
 	/// Look for attached physics handle
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (PhysicsHandle)
@@ -37,6 +39,11 @@ void UGrabber::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("NO PHYSICS HANDLE FOUND FOR %s"), *ObjectName);
 	}
+}
+
+void UGrabber::SetupInputComponent()
+{
+	FString ObjectName = GetOwner()->GetName();
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 	if (InputComponent)
 	{
@@ -51,45 +58,33 @@ void UGrabber::BeginPlay()
 	}
 }
 
-void UGrabber::Grab()
+const FHitResult UGrabber::GetFirstPhysicsBodyinReach()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Grab Key Pressed"));
-}
-
-void UGrabber::Release()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Release Key Pressed"));
-}
-
-// Called every frame
-void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	/// Get player viewpoint
 	FVector PVPLocation;  //PVP is PlayerViewPoint
 	FRotator PVPRotation;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PVPLocation,OUT PVPRotation);
-	
-	
-	/*UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"), 
-		*PVPLocation.ToString(), 
-		*PVPRotation.ToString()
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PVPLocation, OUT PVPRotation);
+
+
+	/*UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"),
+	*PVPLocation.ToString(),
+	*PVPRotation.ToString()
 	)*/
 
 	FVector LineTrace = PVPRotation.Vector()*Reach;
-	FVector LineTraceEnd = PVPLocation +LineTrace; //cm
+	FVector LineTraceEnd = PVPLocation + LineTrace; 
+
 	//Draw a red trace in the world to visualize
-	DrawDebugLine(
-		GetWorld(),
-		PVPLocation,
-		LineTraceEnd,
-		FColor(255, 0, 0),
-		false,
-		0.f,
-		0.f,
-		10.f
-	);
+													//DrawDebugLine(
+													//	GetWorld(),
+													//	PVPLocation,
+													//	LineTraceEnd,
+													//	FColor(255, 0, 0),
+													//	false,
+													//	0.f,
+													//	0.f,
+													//	10.f
+													//);
 	/// Setup Query Param
 	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());  //This interacts with simple collision objects and ignore outself
 
@@ -100,14 +95,40 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		PVPLocation,
 		LineTraceEnd,
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody)
-		);
+	);
 	// See what we hit
 	AActor *ActorHit = Hit.GetActor();
 	if (ActorHit)
 	{
-	FString IntersectingActor = ActorHit->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("Intersecting with: %s"), *IntersectingActor);
+		FString IntersectingActor = ActorHit->GetName();
+		UE_LOG(LogTemp, Warning, TEXT("Intersecting with: %s"), *IntersectingActor);
 	}
-	 
+	return FHitResult();
+}
+
+void UGrabber::Grab()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Grab Key Pressed"));
+
+	/// Try and reach any actors with physics body collision channel set
+	GetFirstPhysicsBodyinReach();
+	/// if we hit something attach a physics handle
+	// TODO attach physics handle
+}
+
+void UGrabber::Release()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Release Key Pressed"));
+	// TODO Release physics handle
+}
+
+// Called every frame
+void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// if physics handle is attached
+	// move object that were holding
+		 
 }
 
