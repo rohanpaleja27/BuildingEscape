@@ -3,6 +3,8 @@
 #include "Grabber.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Controller.h"
+#include "Components/ActorComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"
 #include "Public/DrawDebugHelpers.h"
 #include "GameFramework/Actor.h"
@@ -103,7 +105,7 @@ const FHitResult UGrabber::GetFirstPhysicsBodyinReach()
 		FString IntersectingActor = ActorHit->GetName();
 		UE_LOG(LogTemp, Warning, TEXT("Intersecting with: %s"), *IntersectingActor);
 	}
-	return FHitResult();
+	return Hit;
 }
 
 void UGrabber::Grab()
@@ -111,24 +113,48 @@ void UGrabber::Grab()
 	UE_LOG(LogTemp, Warning, TEXT("Grab Key Pressed"));
 
 	/// Try and reach any actors with physics body collision channel set
-	GetFirstPhysicsBodyinReach();
+	auto HitResult = GetFirstPhysicsBodyinReach();
+	auto ComponentToGrab = HitResult.GetComponent();
+	auto ActorHit = HitResult.GetActor();
 	/// if we hit something attach a physics handle
 	// TODO attach physics handle
+	if (ActorHit != nullptr)
+	{
+		PhysicsHandle->GrabComponent(
+			ComponentToGrab,
+			NAME_None,
+			ComponentToGrab->GetOwner()->GetActorLocation(),
+			true); // allow rotation
+	}
 }
 
 void UGrabber::Release()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Release Key Pressed"));
 	// TODO Release physics handle
+	PhysicsHandle->ReleaseComponent();
 }
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	/// Get player viewpoint
+	FVector PVPLocation;  //PVP is PlayerViewPoint
+	FRotator PVPRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PVPLocation, OUT PVPRotation);
+
+
+	FVector LineTrace = PVPRotation.Vector()*Reach;
+	FVector LineTraceEnd = PVPLocation + LineTrace;
+
 
 	// if physics handle is attached
+	if (PhysicsHandle->GrabbedComponent) // if we grabbed something
+	{
+		PhysicsHandle->SetTargetLocation(LineTraceEnd); // Places in target location
+	
 	// move object that were holding
-		 
+	}	 
 }
 
