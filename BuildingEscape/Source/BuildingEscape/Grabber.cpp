@@ -31,12 +31,14 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!PhysicsHandle) { return; }
 	// if physics handle is attached
 	if (PhysicsHandle->GrabbedComponent) // if we grabbed something
 	{
 		PhysicsHandle->SetTargetLocation(GetReachLineEnd()); // Places in target location
 	}	 
 }
+
 void UGrabber::FindPhysicsHandleComponent()
 {
 	FString ObjectName = GetOwner()->GetName();
@@ -114,6 +116,7 @@ void UGrabber::Grab()
 	/// if we hit something attach a physics handle
 	if (ActorHit != nullptr)
 	{
+		if (!PhysicsHandle) { return; }
 		PhysicsHandle->GrabComponent(
 			ComponentToGrab, // turns out to be mesh
 			NAME_None, // no bones needed
@@ -125,7 +128,7 @@ void UGrabber::Grab()
 void UGrabber::Release()
 {
 	/// UE_LOG(LogTemp, Warning, TEXT("Release Key Pressed"));
-	// TODO Release physics handle
+	if (!PhysicsHandle) { return; }
 	PhysicsHandle->ReleaseComponent();
 }
 
