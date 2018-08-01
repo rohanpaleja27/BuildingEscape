@@ -29,23 +29,7 @@ void UOpenDoor::BeginPlay()
 	SetupPressurePlate();
 }
 
-void UOpenDoor::OpenDoor()
-{
-	//FRotator opener = FRotator(0.0f, OpenAngle, 0.0f);	
-	//Owner->SetActorRotation(opener);
-	OnOpenRequest.Broadcast();
-}
 
-void UOpenDoor::CloseDoor()
-{
-	FRotator closer = FRotator(0.0f, 0.0f, 0.0f);
-	Owner->SetActorRotation(closer);
-	/*
-	Troubleshooting code
-	FString Rotation = Owner->GetActorRotation().ToString();
-	UE_LOG(LogTemp, Warning, TEXT("%s is at"), *Rotation);
-	*/
-}
 
 
 
@@ -59,13 +43,12 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if (GetTotalMassofActorsOnPlate() > MaxMassToOpenDoor) 
 	{
 		// If the ActorThatOpens is in the volume
-		OpenDoor();
-		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
+		OnOpen.Broadcast();
 	}
 	// Check if its time to close the door
-	if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime >= DoorCloseDelay)
+	else
 	{
-		CloseDoor();
+		OnClose.Broadcast();
 	}
 }
 
