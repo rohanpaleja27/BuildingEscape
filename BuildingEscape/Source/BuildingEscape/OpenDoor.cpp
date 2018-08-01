@@ -3,6 +3,7 @@
 #include "OpenDoor.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Controller.h"
+#include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 
@@ -54,7 +55,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Poll the Trigger Volume 
-	if (GetTotalMassofActorsOnPlate() > 50.f) // TODO make into a private variable
+	if (GetTotalMassofActorsOnPlate() > 20.f) // TODO make into a private variable
 	{
 		// If the ActorThatOpens is in the volume
 		OpenDoor();
@@ -73,13 +74,13 @@ float UOpenDoor::GetTotalMassofActorsOnPlate()
 	// Find all overlapping actors
 	TArray<AActor*> OverlappingActors;
 	PressurePlate->GetOverlappingActors(OUT OverlappingActors); // Fills this tarray
-	// iterate through their masses and add
-	//String JoinedStr;
-	//for (auto& Str : StrArr)
-	//{
-	//	JoinedStr += Str;
-	//	JoinedStr += TEXT(" ");
-	//}
+	 //iterate through their masses and add
+	for (const auto* Actor : OverlappingActors)
+	{
+		
+		TotalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+		UE_LOG(LogTemp, Warning, TEXT("%s intersecting with pressure plate"), *Actor->GetName());
+	}
 	return TotalMass;
 }
 
