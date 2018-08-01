@@ -27,6 +27,16 @@ void UGrabber::BeginPlay()
 	SetupInputComponent();
 }
 
+void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// if physics handle is attached
+	if (PhysicsHandle->GrabbedComponent) // if we grabbed something
+	{
+		PhysicsHandle->SetTargetLocation(GetReachLineEnd()); // Places in target location
+	}	 
+}
 void UGrabber::FindPhysicsHandleComponent()
 {
 	FString ObjectName = GetOwner()->GetName();
@@ -120,16 +130,7 @@ void UGrabber::Release()
 }
 
 // Called every frame
-void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// if physics handle is attached
-	if (PhysicsHandle->GrabbedComponent) // if we grabbed something
-	{
-		PhysicsHandle->SetTargetLocation(GetReachLineEnd()); // Places in target location
-	}	 
-}
 
 FVector UGrabber::GetReachLineEnd()
 {
