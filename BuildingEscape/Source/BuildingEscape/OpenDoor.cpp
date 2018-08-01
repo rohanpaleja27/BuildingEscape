@@ -55,7 +55,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Poll the Trigger Volume 
-	if (GetTotalMassofActorsOnPlate() > 20.f) // TODO make into a private variable
+	if (GetTotalMassofActorsOnPlate() > MaxMassToOpenDoor) 
 	{
 		// If the ActorThatOpens is in the volume
 		OpenDoor();

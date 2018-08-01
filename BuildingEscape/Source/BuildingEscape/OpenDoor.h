@@ -41,6 +41,9 @@ private:
 	float DoorCloseDelay = 1.f;  // for storing time
 
 	float LastDoorOpenTime;
+
+	UPROPERTY(EditAnywhere)
+	float MaxMassToOpenDoor = 20.f;  // for storing time
 	
 	AActor* Owner; //The owning door
 
