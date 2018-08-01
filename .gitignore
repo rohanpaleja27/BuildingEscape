@@ -21,3 +21,6 @@ BuildingEscape/.vs/BuildingEscape/v15/Browse.VC.opendb
 BuildingEscape/.vs/BuildingEscape/v15/ipch/AutoPCH/c00e651523a48dc9/OPENDOOR.ipch
 BuildingEscape/.vs/BuildingEscape/v15/ipch/AutoPCH/9d53193f39b658b0/GRABBER.ipch
 .vs/
+BuildingEscape/Executable/WindowsNoEditor/Engine/Build/Build.version
+BuildingEscape/Executable/WindowsNoEditor/Manifest_NonUFSFiles_Win64.txt
+BuildingEscape/Executable/WindowsNoEditor/BuildingEscape/Content/Paks/BuildingEscape-WindowsNoEditor.pak
